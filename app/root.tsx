@@ -45,9 +45,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <>
-      <nav>
-        <Link to="/">Home</Link> | <Link to="/meals/search">Meals Search</Link> |{" "}
-        <Link to="/meals/all">All Meals</Link> | <Link to="/favorites">Favorites</Link>
+      <nav className="nav">
+        <div className="nav__container">
+          <Link to="/" className="nav__link">Home</Link>
+          <Link to="/meals/search" className="nav__link">Meals Search</Link>
+          <Link to="/meals/all" className="nav__link">All Meals</Link>
+          <Link to="/favorites" className="nav__link">Favorites</Link>
+        </div>
       </nav>
       <Outlet />
     </>

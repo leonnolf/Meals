@@ -10,18 +10,22 @@ export default function FavoritesPage() {
     setMeals(stored);
   }, []);
 
-  if (meals.length === 0) return <p>Geen favorieten nog.</p>;
-
   return (
-    <div>
-      <h1>Favorieten ★</h1>
-      <ul>
-        {meals.map((meal) => (
-          <li key={meal.idMeal}>
-            <Link to={`/meals/${meal.idMeal}`}>{meal.strMeal}</Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <main className="favorites">
+      <h1 className="favorites__title">Favorieten ★</h1>
+      {meals.length === 0 ? (
+        <p className="favorites__empty">Geen favorieten nog.</p>
+      ) : (
+        <ul className="favorites__list">
+          {meals.map((meal) => (
+            <li key={meal.idMeal} className="favorites__item">
+              <Link to={`/meals/${meal.idMeal}`} className="favorites__link">
+                {meal.strMeal}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
   );
 }
