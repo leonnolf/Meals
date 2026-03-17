@@ -18,13 +18,26 @@ export async function getCategories() {
   return (data.categories ?? []) as Category[];
 }
 
+export async function getIngredients() {
+  const res = await fetch(`${BASE}/list.php?i=list`);
+  const data = await res.json();
+  console.log(data);
+  return (data.meals ?? []).map((i: { strIngredient: string }) => i.strIngredient) as string[];
+}
+
+export async function getCountries() {
+  const res = await fetch(`${BASE}/list.php?a=list`);
+  const data = await res.json();
+  return (data.meals ?? []).map((i: { strArea: string }) => i.strArea) as string[];
+}
+
 export type Meal = {
   idMeal: string;
   strMeal: string;
   strMealThumb: string;
   strInstructions: string;
   strCategory: string;
-  strArea: string;
+  strCountry: string;
   [key: string]: string;
 };
 

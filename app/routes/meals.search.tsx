@@ -1,16 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router";
-import { searchMeals, type Meal } from "~/api/meals";
+import { searchMeals, getIngredients, getCountries, type Meal } from "~/api/meals";
 
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [meals, setMeals] = useState<Meal[]>([]);
   const [loading, setLoading] = useState(false);
+  const [ingredients, setIngredients] = useState<string[]>([]);
+  const [countries, setCountries] = useState<string[]>([]);
   const q = searchParams.get("q") ?? "";
+
+  useEffect(() => {
+    getIngredients().then(setIngredients);
+    getCountries().then(setCountries);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const query = (e.currentTarget.elements.namedItem("q") as HTMLInputElement).value;
+    const query = (e.currentTarget.elements.namedItem("q") as HTMLInputElement)
+      .value;
     setSearchParams({ q: query });
     setLoading(true);
     const results = await searchMeals(query);
@@ -35,6 +43,19 @@ export default function SearchPage() {
               <span>{meal.strMeal}</span>
             </Link>
           </li>
+        ))}
+      </ul>
+
+      <h2>Ingredients</h2>
+      <ul>
+        {ingredients.map((ingredient) => (
+          <li key={ingredient}>{ingredient}</li>
+        ))}
+      </ul>
+      <h2>Countries</h2>
+      <ul>
+        {countries.map((country) => (
+          <li key={country}>{country}</li>
         ))}
       </ul>
     </div>
