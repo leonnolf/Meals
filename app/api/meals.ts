@@ -12,6 +12,30 @@ export async function getMealById(id: string) {
   return (data.meals?.[0] ?? null) as Meal | null;
 }
 
+export async function getRandomMeal() {
+  const res = await fetch(`${BASE}/random.php`);
+  const data = await res.json();
+  return (data.meals?.[0] ?? null) as Meal | null;
+}
+
+export async function getAllMeals() {
+  const letters = "abcdefghijklmnopqrstuvwxyz".split("");
+  const responses = await Promise.all(
+    letters.map(async (letter) => {
+      const res = await fetch(`${BASE}/search.php?f=${letter}`);
+      const data = await res.json();
+      return (data.meals ?? []) as Meal[];
+    })
+  );
+
+  const mealMap = new Map<string, Meal>();
+  responses.flat().forEach((meal) => {
+    mealMap.set(meal.idMeal, meal);
+  });
+
+  return Array.from(mealMap.values());
+}
+
 export async function getCategories() {
   const res = await fetch(`${BASE}/categories.php`);
   const data = await res.json();
