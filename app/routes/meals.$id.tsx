@@ -40,18 +40,14 @@ export default function MealPage() {
     .filter(({ ingredient }) => ingredient?.trim());
 
   return (
-    <div>
-      <h1>
-        {meal.strMeal}{" "}
-        <button onClick={toggleFavorite}>{favorited ? "★" : "☆"}</button>
-      </h1>
-      <img src={meal.strMealThumb} alt={meal.strMeal} />
-      <p>{meal.strCategory} · {meal.strArea}</p>
     <div className="meal-detail">
       <button className="meal-detail__back" onClick={() => navigate("/meals/search")}>
         ← Back to Search
       </button>
-      <h1 className="meal-detail__title">{meal.strMeal}</h1>
+      <h1 className="meal-detail__title">
+        {meal.strMeal}{" "}
+        <button onClick={toggleFavorite} className="meal-detail__favorite">{favorited ? "★" : "☆"}</button>
+      </h1>
       <img className="meal-detail__image" src={meal.strMealThumb} alt={meal.strMeal} />
       <p className="meal-detail__meta">{meal.strCategory} · {meal.strArea}</p>
 
