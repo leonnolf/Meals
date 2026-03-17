@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { getMealById, type Meal } from "~/api/meals";
 
 export default function MealPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [meal, setMeal] = useState<Meal | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -25,20 +26,29 @@ export default function MealPage() {
     .filter(({ ingredient }) => ingredient?.trim());
 
   return (
-    <div>
-      <h1>{meal.strMeal}</h1>
-      <img src={meal.strMealThumb} alt={meal.strMeal} />
-      <p>{meal.strCategory} · {meal.strArea}</p>
+    <div className="meal-detail">
+      <button className="meal-detail__back" onClick={() => navigate("/meals/search")}>
+        ← Back to Search
+      </button>
+      <h1 className="meal-detail__title">{meal.strMeal}</h1>
+      <img className="meal-detail__image" src={meal.strMealThumb} alt={meal.strMeal} />
+      <p className="meal-detail__meta">{meal.strCategory} · {meal.strArea}</p>
 
-      <h2>Ingredients</h2>
-      <ul>
-        {ingredients.map(({ ingredient, measure }) => (
-          <li key={ingredient}>{measure} {ingredient}</li>
-        ))}
-      </ul>
+      <div className="meal-detail__content">
+        <div className="meal-detail__column">
+          <h2 className="meal-detail__heading">Ingredients</h2>
+          <ul className="meal-detail__ingredients">
+            {ingredients.map(({ ingredient, measure }) => (
+              <li key={ingredient} className="meal-detail__ingredient">{measure} {ingredient}</li>
+            ))}
+          </ul>
+        </div>
 
-      <h2>Instructions</h2>
-      <p>{meal.strInstructions}</p>
+        <div className="meal-detail__column">
+          <h2 className="meal-detail__heading">Instructions</h2>
+          <p className="meal-detail__instructions">{meal.strInstructions}</p>
+        </div>
+      </div>
     </div>
   );
 }
