@@ -1,13 +1,23 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router";
-import { searchMeals, getIngredients, getCountries, type Meal } from "~/api/meals";
+import {
+  searchMeals,
+  getIngredients,
+  getCountries,
+  getMealsByIngredients,
+  getMealsByCountry,
+  type Meal,
+  type MealSummary,
+} from "~/api/meals";
 
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [meals, setMeals] = useState<Meal[]>([]);
+  const [meals, setMeals] = useState<Meal[] | MealSummary[]>([]);
   const [loading, setLoading] = useState(false);
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [countries, setCountries] = useState<string[]>([]);
+  const [checkedIngredients, setCheckedIngredients] = useState<string[]>([]);
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
   const q = searchParams.get("q") ?? "";
 
   useEffect(() => {
@@ -15,14 +25,31 @@ export default function SearchPage() {
     getCountries().then(setCountries);
   }, []);
 
+  function toggleIngredient(ingredient: string) {
+    setCheckedIngredients((prev) =>
+      prev.includes(ingredient)
+        ? prev.filter((i) => i !== ingredient)
+        : [...prev, ingredient]
+    );
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const query = (e.currentTarget.elements.namedItem("q") as HTMLInputElement)
-      .value;
-    setSearchParams({ q: query });
+    const query = (e.currentTarget.elements.namedItem("q") as HTMLInputElement).value;
     setLoading(true);
-    const results = await searchMeals(query);
-    setMeals(results);
+
+    if (checkedIngredients.length > 0) {
+      const results = await getMealsByIngredients(checkedIngredients);
+      setMeals(results);
+    } else if (selectedCountry) {
+      const results = await getMealsByCountry(selectedCountry);
+      setMeals(results);
+    } else {
+      setSearchParams({ q: query });
+      const results = await searchMeals(query);
+      setMeals(results);
+    }
+
     setLoading(false);
   }
 
@@ -30,6 +57,34 @@ export default function SearchPage() {
     <div>
       <form onSubmit={handleSubmit}>
         <input name="q" defaultValue={q} placeholder="Search meals..." />
+
+        <h3>Ingredients</h3>
+        {ingredients.map((ingredient) => (
+          <label key={ingredient}>
+            <input
+              type="checkbox"
+              value={ingredient}
+              checked={checkedIngredients.includes(ingredient)}
+              onChange={() => toggleIngredient(ingredient)}
+            />
+            {ingredient}
+          </label>
+        ))}
+
+        <h3>Country</h3>
+        {countries.map((country) => (
+          <label key={country}>
+            <input
+              type="radio"
+              name="countries"
+              value={country}
+              checked={selectedCountry === country}
+              onChange={() => setSelectedCountry(country)}
+            />
+            {country}
+          </label>
+        ))}
+
         <button type="submit">Search</button>
       </form>
 
@@ -43,19 +98,6 @@ export default function SearchPage() {
               <span>{meal.strMeal}</span>
             </Link>
           </li>
-        ))}
-      </ul>
-
-      <h2>Ingredients</h2>
-      <ul>
-        {ingredients.map((ingredient) => (
-          <li key={ingredient}>{ingredient}</li>
-        ))}
-      </ul>
-      <h2>Countries</h2>
-      <ul>
-        {countries.map((country) => (
-          <li key={country}>{country}</li>
         ))}
       </ul>
     </div>

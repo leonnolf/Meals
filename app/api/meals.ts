@@ -46,3 +46,31 @@ export type Category = {
   strCategory: string;
   strCategoryThumb: string;
 };
+
+export async function getMealsByIngredient(ingredient: string) {
+  const res = await fetch(`${BASE}/filter.php?i=${ingredient}`);
+  const data = await res.json();
+  return (data.meals ?? []) as MealSummary[];
+}
+
+export async function getMealsByIngredients(ingredients: string[]) {
+  if (ingredients.length === 0) return [];
+  const results = await Promise.all(
+    ingredients.map((i) => getMealsByIngredient(i.replace(/ /g, "_")))
+  );
+  return results.reduce((acc, curr) =>
+    acc.filter((meal) => curr.some((m) => m.idMeal === meal.idMeal))
+  );
+}
+
+export async function getMealsByCountry(country: string) {
+  const res = await fetch(`${BASE}/filter.php?a=${country}`);
+  const data = await res.json();
+  return (data.meals ?? []) as MealSummary[];
+}
+
+export type MealSummary = {
+  idMeal: string;
+  strMeal: string;
+  strMealThumb: string;
+};
