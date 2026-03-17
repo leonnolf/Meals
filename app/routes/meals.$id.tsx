@@ -7,13 +7,27 @@ export default function MealPage() {
   const navigate = useNavigate();
   const [meal, setMeal] = useState<Meal | null>(null);
   const [loading, setLoading] = useState(true);
+  const [favorited, setFavorited] = useState(false);
 
   useEffect(() => {
     getMealById(id!).then((data) => {
       setMeal(data);
       setLoading(false);
+      if (data) {
+        const stored: Meal[] = JSON.parse(localStorage.getItem("favorites") || "[]");
+        setFavorited(stored.some((m) => m.idMeal === data.idMeal));
+      }
     });
   }, [id]);
+
+  function toggleFavorite() {
+    if (!meal) return;
+    const stored: Meal[] = JSON.parse(localStorage.getItem("favorites") || "[]");
+    const exists = stored.some((m) => m.idMeal === meal.idMeal);
+    const updated = exists ? stored.filter((m) => m.idMeal !== meal.idMeal) : [...stored, meal];
+    localStorage.setItem("favorites", JSON.stringify(updated));
+    setFavorited(!exists);
+  }
 
   if (loading) return <p>Loading...</p>;
   if (!meal) return <p>Meal not found.</p>;
@@ -30,7 +44,10 @@ export default function MealPage() {
       <button className="meal-detail__back" onClick={() => navigate("/meals/search")}>
         ← Back to Search
       </button>
-      <h1 className="meal-detail__title">{meal.strMeal}</h1>
+      <h1 className="meal-detail__title">
+        {meal.strMeal}{" "}
+        <button onClick={toggleFavorite} className="meal-detail__favorite">{favorited ? "★" : "☆"}</button>
+      </h1>
       <img className="meal-detail__image" src={meal.strMealThumb} alt={meal.strMeal} />
       <p className="meal-detail__meta">{meal.strCategory} · {meal.strArea}</p>
 
