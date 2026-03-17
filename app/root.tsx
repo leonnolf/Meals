@@ -47,7 +47,7 @@ export default function App() {
     <>
       <nav>
         <Link to="/">Home</Link> | <Link to="/meals/search">Meals Search</Link> |{" "}
-        <Link to="/meals/all">All Meals</Link>
+        <Link to="/meals/all">All Meals</Link> | <Link to="/favorites">Favorites</Link>
       </nav>
       <Outlet />
     </>
