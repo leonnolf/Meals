@@ -47,13 +47,13 @@ body {
 }
 
 .home__link--primary {
-  background-color: #ff6b6b;
+  background-color: #848ae2;
   font-size: 1.1rem;
   padding: 0.875rem 1.5rem;
 }
 
 .home__link--primary:hover {
-  background-color: #ff5252;
+  background-color: #494fa0;
 }
 
 .home__link--secondary {
