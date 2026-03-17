@@ -14,16 +14,16 @@ export default function AllMealsPage() {
   }, []);
 
   return (
-    <main>
-      <h1>All Meals</h1>
-      {loading && <p>Alle meals laden...</p>}
+    <main className="all-meals">
+      <h1 className="all-meals__title">Alle Maaltijden</h1>
+      {loading && <p className="all-meals__loading">Alle meals laden...</p>}
 
-      <ul>
+      <ul className="all-meals__list">
         {meals.map((meal) => (
-          <li key={meal.idMeal}>
-            <Link to={`/meals/${meal.idMeal}`}>
-              <img src={`${meal.strMealThumb}/small`} alt={meal.strMeal} />
-              <span>{meal.strMeal}</span>
+          <li key={meal.idMeal} className="all-meals__item">
+            <Link to={`/meals/${meal.idMeal}`} className="all-meals__link">
+              <img src={`${meal.strMealThumb}/small`} alt={meal.strMeal} className="all-meals__image" />
+              <span className="all-meals__name">{meal.strMeal}</span>
             </Link>
           </li>
         ))}
